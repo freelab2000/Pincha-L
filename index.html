@@ -116,7 +116,7 @@
     </form>
 
     <div class="resultado" id="resultado">Resultado:</div>
-    <div class="footer">v2.2.15fwt</div>
+    <div class="footer">v2.2.16fwt</div>
   </div>
 
   <script>
@@ -133,7 +133,6 @@
     const bloqueHora = document.getElementById('bloqueHora');
 
     const opcionesHorario = {
-      default: ["00:00z - 01:00z", "01:00z - 03:59z", "+04:00z", "00:00z - 02:30z", "-"],
       dw106: ["00:00z - 01:00z", "01:00z - 03:59z", "+04:00z"],
       do_dh: ["00:00z - 02:30z"]
     };
@@ -160,13 +159,7 @@
       const tipo = selectTipo.value;
       const duracion = selectDuracion.value;
 
-      let opciones = opcionesHorario.default;
-      if (tipo === "DO/DH" && (duracion === "<= 5 days" || duracion === ">= 6 days")) {
-        opciones = opcionesHorario.do_dh;
-      } else if (tipo === "DW(106)") {
-        opciones = opcionesHorario.dw106;
-      }
-
+      let opciones = tipo === "DW(106)" ? opcionesHorario.dw106 : opcionesHorario.do_dh;
       selectHora.innerHTML = "";
       opciones.forEach(op => {
         const option = document.createElement("option");
