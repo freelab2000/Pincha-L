@@ -139,46 +139,14 @@
     };
 
     const reglasExtra = [
-      {
-        tipo: "DW(106)", sabado: "Yes", finmes: "Yes",
-        horarios: ["00:00z - 01:00z", "01:00z - 03:59z", "+04:00z"],
-        resultado: "3,3% + 4L + 2L a continuación, incluye sábado y domingo"
-      },
-      {
-        tipo: "DW(106)", sabado: "No", finmes: "No",
-        horarios: ["00:00z - 01:00z", "01:00z - 03:59z", "+04:00z"],
-        resultado: "3,3% + 1L o más a continuación"
-      },
-      {
-        tipo: "DW(106)", sabado: "Yes", finmes: "No",
-        horarios: ["00:00z - 01:00z"],
-        resultado: "3,3% + 3L a continuación (sábado activo)"
-      },
-      {
-        tipo: "DW(106)", sabado: "Yes", finmes: "No",
-        horarios: ["01:00z - 03:59z"],
-        resultado: "3,3% + 2L a continuación"
-      },
-      {
-        tipo: "DW(106)", sabado: "Yes", finmes: "No",
-        horarios: ["+04:00z"],
-        resultado: "3,3% sin L a continuación"
-      },
-      {
-        tipo: "DW(106)", sabado: "No", finmes: "Yes",
-        horarios: ["00:00z - 01:00z"],
-        resultado: "3,3% + 2L (último día sin sábado)"
-      },
-      {
-        tipo: "DW(106)", sabado: "No", finmes: "Yes",
-        horarios: ["01:00z - 03:59z"],
-        resultado: "3,3% + 1L exacto"
-      },
-      {
-        tipo: "DW(106)", sabado: "No", finmes: "Yes",
-        horarios: ["+04:00z"],
-        resultado: "3,3% + sin L"
-      }
+      { tipo: "DW(106)", sabado: "Yes", finmes: "Yes", horarios: ["00:00z - 01:00z", "01:00z - 03:59z", "+04:00z"], resultado: "3,3% + 4L + 2L a continuación, incluye sábado y domingo" },
+      { tipo: "DW(106)", sabado: "No", finmes: "No", horarios: ["00:00z - 01:00z", "01:00z - 03:59z", "+04:00z"], resultado: "3,3% + 1L o más a continuación" },
+      { tipo: "DW(106)", sabado: "Yes", finmes: "No", horarios: ["00:00z - 01:00z"], resultado: "3,3% + 3L a continuación (sábado activo)" },
+      { tipo: "DW(106)", sabado: "Yes", finmes: "No", horarios: ["01:00z - 03:59z"], resultado: "3,3% + 2L a continuación" },
+      { tipo: "DW(106)", sabado: "Yes", finmes: "No", horarios: ["+04:00z"], resultado: "3,3% sin L a continuación" },
+      { tipo: "DW(106)", sabado: "No", finmes: "Yes", horarios: ["00:00z - 01:00z"], resultado: "3,3% + 2L (último día sin sábado)" },
+      { tipo: "DW(106)", sabado: "No", finmes: "Yes", horarios: ["01:00z - 03:59z"], resultado: "3,3% + 1L exacto" },
+      { tipo: "DW(106)", sabado: "No", finmes: "Yes", horarios: ["+04:00z"], resultado: "3,3% + sin L" }
     ];
 
     function normalizar(valor) {
@@ -204,10 +172,10 @@
         selectHora.appendChild(option);
       });
 
-      // Mostrar/Ocultar según tipo
-      bloqueSabado.classList.toggle("hidden", tipo !== "DW(106)");
-      bloqueFinmes.classList.toggle("hidden", tipo !== "DW(106)");
-      bloqueDuracion.classList.toggle("hidden", tipo === "DW(106)");
+      const esDW = tipo === "DW(106)";
+      bloqueSabado.classList.toggle("hidden", !esDW);
+      bloqueFinmes.classList.toggle("hidden", !esDW);
+      bloqueDuracion.classList.toggle("hidden", esDW);
       bloqueHora.classList.toggle("hidden", tipo === "DO/DH" && duracion === "Day 6");
     }
 
@@ -239,7 +207,7 @@
       resultadoDiv.innerHTML = "Resultado:";
     });
 
-    ['tipo', 'duracion', 'sabado', 'finmes', 'hora'].forEach(id => {
+    ['tipo', 'duracion'].forEach(id => {
       document.getElementById(id).addEventListener('change', actualizarOpcionesHorario);
     });
 
