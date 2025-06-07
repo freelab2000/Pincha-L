@@ -129,6 +129,11 @@
     const selectFinmes = document.getElementById('finmes');
     const resultadoDiv = document.getElementById("resultado");
 
+    const bloqueDuracion = document.getElementById('bloqueDuracion');
+    const bloqueSabado = document.getElementById('bloqueSabado');
+    const bloqueFinmes = document.getElementById('bloqueFinmes');
+    const bloqueHora = document.getElementById('bloqueHora');
+
     const opcionesHorario = {
       default: ["00:00z - 01:00z", "01:00z - 03:59z", "+04:00z", "00:00z - 02:30z", "-"],
       dw106: ["00:00z - 01:00z", "01:00z - 03:59z", "+04:00z"],
@@ -151,6 +156,10 @@
         resultado: "3,3% + 1L o más a continuación"
       }
     ];
+
+    function normalizar(valor) {
+      return (valor || "").trim().toLowerCase();
+    }
 
     function actualizarOpcionesHorario() {
       const tipo = selectTipo.value;
@@ -188,8 +197,8 @@
 
       const regla = reglasExtra.find(r =>
         r.tipo === tipo &&
-        r.sabado === sabado &&
-        r.finmes === finmes &&
+        normalizar(r.sabado) === normalizar(sabado) &&
+        normalizar(r.finmes) === normalizar(finmes) &&
         r.horarios.includes(hora)
       );
 
