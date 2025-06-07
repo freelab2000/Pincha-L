@@ -84,7 +84,6 @@
           <option value="<= 5 days">&lt;= 5 days</option>
           <option value=">= 6 days">&gt;= 6 days</option>
           <option value="Day 6">Day 6</option>
-          <option value="-">-</option>
         </select>
       </div>
 
@@ -116,7 +115,7 @@
     </form>
 
     <div class="resultado" id="resultado">Resultado:</div>
-    <div class="footer">v2.2.17fwt</div>
+    <div class="footer">v2.2.18fwt</div>
   </div>
 
   <script>
@@ -138,17 +137,17 @@
     };
 
     const reglasExtra = [
-      { tipo: "DW(106)", sabado: "Yes", finmes: "Yes", horarios: ["00:00z - 01:00z", "01:00z - 03:59z", "+04:00z"], resultado: "3,3% + 4L + 2L a continuación, incluye sábado y domingo" },
-      { tipo: "DW(106)", sabado: "No", finmes: "No", horarios: ["00:00z - 01:00z", "01:00z - 03:59z", "+04:00z"], resultado: "3,3% + 1L o más a continuación" },
-      { tipo: "DW(106)", sabado: "Yes", finmes: "No", horarios: ["00:00z - 01:00z"], resultado: "3,3% + 3L a continuación (sábado activo)" },
-      { tipo: "DW(106)", sabado: "Yes", finmes: "No", horarios: ["01:00z - 03:59z"], resultado: "3,3% + 2L a continuación" },
-      { tipo: "DW(106)", sabado: "Yes", finmes: "No", horarios: ["+04:00z"], resultado: "3,3% sin L a continuación" },
-      { tipo: "DW(106)", sabado: "No", finmes: "Yes", horarios: ["00:00z - 01:00z"], resultado: "3,3% + 2L (último día sin sábado)" },
-      { tipo: "DW(106)", sabado: "No", finmes: "Yes", horarios: ["01:00z - 03:59z"], resultado: "3,3% + 1L exacto" },
-      { tipo: "DW(106)", sabado: "No", finmes: "Yes", horarios: ["+04:00z"], resultado: "3,3% + sin L" },
-      { tipo: "DO/DH", duracion: "<= 5 days", resultado: "2,5% día corto" },
-      { tipo: "DO/DH", duracion: ">= 6 days", resultado: "3,0% día largo" },
-      { tipo: "DO/DH", duracion: "Day 6", resultado: "3,5% día sexto" }
+      // DO/DH
+      { tipo: "DO/DH", duracion: "Day 6", resultado: "3,3% + se agregan L necesarios para completar los 4 L inmediatamente posterior" },
+      { tipo: "DO/DH", duracion: "<= 5 days", resultado: "3,3% + Día libre a continuación compensatorio" },
+      { tipo: "DO/DH", duracion: ">= 6 days", resultado: "3,3% + Día(s) para completar 4 L inmediatamente posterior" },
+      // DW(106)
+      { tipo: "DW(106)", sabado: "No", finmes: "No", horarios: ["00:00z - 01:00z"], resultado: "3,3% + Día libre después del último L, no se reintegra antes de 12:00z" },
+      { tipo: "DW(106)", sabado: "No", finmes: "No", horarios: ["01:00z - 03:59z", "+04:00z"], resultado: "3,3% + 1 L o más a continuación" },
+      { tipo: "DW(106)", sabado: "Yes", finmes: "No", horarios: ["00:00z - 01:00z", "01:00z - 03:59z"], resultado: "3,3% + 1 bloque de 106 incluye sábado y domingo" },
+      { tipo: "DW(106)", sabado: "Yes", finmes: "No", horarios: ["+04:00z"], resultado: "5% + 1 bloque de 106 incluye sábado y domingo" },
+      { tipo: "DW(106)", sabado: "No", finmes: "Yes", horarios: ["00:00z - 01:00z", "01:00z - 03:59z"], resultado: "3,3% + 4L + 2L a continuación, incluye sábado y domingo. No se consideran los DH" },
+      { tipo: "DW(106)", sabado: "No", finmes: "Yes", horarios: ["+04:00z"], resultado: "5% + 4L + 2L a continuación, incluye sábado y domingo. No se consideran los DH" }
     ];
 
     function normalizar(valor) {
