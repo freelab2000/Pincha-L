@@ -1,11 +1,17 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pincha L</title>
   <link rel="manifest" href="manifest.json">
-  <link rel="icon" href="icon-192x192.png">
+  <meta name="theme-color" content="#ffffff">
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').then(function(reg) {
+        console.log("Service Worker registrado:", reg);
+      });
+    }
+  </script>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -130,8 +136,6 @@
     const selectTipo = document.getElementById('tipo');
     const selectDuracion = document.getElementById('duracion');
     const selectHora = document.getElementById('hora');
-    const selectSabado = document.getElementById('sabado');
-    const selectFinmes = document.getElementById('finmes');
     const consultarBtn = document.getElementById('consultarBtn');
 
     const bloqueDuracion = document.getElementById('bloqueDuracion');
@@ -170,7 +174,8 @@
 
       { tipo: "DW(106)", sabado: "No", finmes: "Yes", hora: "00:00z - 01:00z", duracion: "-", resultado: "3,3% + 4L + 2L a continuación, incluye sábado y domingo. No se consideran los DH" },
       { tipo: "DW(106)", sabado: "Yes", finmes: "Yes", hora: "01:00z - 03:59z", duracion: "-", resultado: "3,3% + 4L + 2L a continuación, incluye sábado y domingo. No se consideran los DH" },
-      { tipo: "DW(106)", sabado: "No", finmes: "Yes", hora: "+04:00z", duracion: "-", resultado: "5% + 4L + 2L a continuación, incluye sábado y domingo. No se consideran los DH" }
+      { tipo: "DW(106)", sabado: "No", finmes: "Yes", hora: "+04:00z", duracion: "-", resultado: "5% + 4L + 2L a continuación, incluye sábado y domingo. No se consideran los DH" },
+      { tipo: "DW(106)", sabado: "Yes", finmes: "Yes", hora: "+04:00z", duracion: "-", resultado: "5% + 4L + 2L a continuación, incluye sábado y domingo. No se consideran los DH" }
     ];
 
     function actualizarOpcionesHorario() {
@@ -192,49 +197,40 @@
         selectHora.appendChild(option);
       });
 
-      // Mostrar/ocultar campos según tipo y duración
       if (tipo === "DO/DH") {
         bloqueSabado.classList.add("hidden");
         bloqueFinmes.classList.add("hidden");
         bloqueDuracion.classList.remove("hidden");
-        bloqueHora.classList.toggle("hidden", duracion === "Day 6");
+        if (duracion === "Day 6") {
+          bloqueHora.classList.add("hidden");
+        } else {
+          bloqueHora.classList.remove("hidden");
+        }
       } else if (tipo === "DW(106)") {
         bloqueSabado.classList.remove("hidden");
         bloqueFinmes.classList.remove("hidden");
         bloqueDuracion.classList.add("hidden");
-        bloqueHora.classList.remove("hidden");
-      } else {
-        bloqueSabado.classList.remove("hidden");
-        bloqueFinmes.classList.remove("hidden");
-        bloqueDuracion.classList.remove("hidden");
         bloqueHora.classList.remove("hidden");
       }
     }
 
     document.getElementById('miFormulario').addEventListener('submit', function(e) {
       e.preventDefault();
-      const tipo = selectTipo.value;
-      const duracion = selectDuracion.value;
-      const hora = selectHora.value;
-      const sabado = selectSabado.value;
-      const finmes = selectFinmes.value;
-
-      let resultado = "Sin resultado definido";
-
-      for (const regla of reglas) {
-        if (
-          regla.tipo === tipo &&
-          (tipo === "DO/DH"
-            ? regla.duracion === duracion && regla.hora === hora
-            : regla.sabado === sabado && regla.finmes === finmes && regla.hora === hora
-          )
-        ) {
-          resultado = regla.resultado;
-          break;
-        }
-      }
-
-      document.getElementById("resultado").innerHTML = "Resultado: " + resultado;
+      const datos = {
+        tipo: this.tipo.value,
+        sabado: this.sabado?.value ?? "-",
+        finmes: this.finmes?.value ?? "-",
+        hora: this.hora?.value ?? "-",
+        duracion: this.duracion?.value ?? "-"
+      };
+      const r = reglas.find(rule =>
+        rule.tipo === datos.tipo &&
+        rule.sabado === datos.sabado &&
+        rule.finmes === datos.finmes &&
+        rule.hora === datos.hora &&
+        rule.duracion === datos.duracion
+      );
+      document.getElementById("resultado").innerHTML = "Resultado: " + (r ? r.resultado : "Sin resultado definido");
     });
 
     document.getElementById('limpiarBtn').addEventListener('click', () => {
@@ -249,12 +245,7 @@
       });
     });
 
-    window.addEventListener('load', () => {
-      actualizarOpcionesHorario();
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js');
-      }
-    });
+    window.addEventListener('load', actualizarOpcionesHorario);
   </script>
 </body>
 </html>
