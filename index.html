@@ -141,16 +141,20 @@
       { tipo: "DO/DH", duracion: "Day 6", hora: "00:00z - 02:30z", resultado: "3,3% + se agregan L necesarios para completar los 4 L inmediatamente posterior" },
       { tipo: "DO/DH", duracion: "<= 5 days", hora: "00:00z - 02:30z", resultado: "3,3% + Día libre a continuación compensatorio" },
       { tipo: "DO/DH", duracion: ">= 6 days", hora: "00:00z - 02:30z", resultado: "3,3% + Día(s) para completar 4 L inmediatamente posterior" },
+
       // DW(106)
       { tipo: "DW(106)", sabado: "No", finmes: "No", hora: "00:00z - 01:00z", resultado: "3,3% + Día libre después del último L, no se reintegra antes de 12:00z" },
       { tipo: "DW(106)", sabado: "No", finmes: "No", hora: "01:00z - 03:59z", resultado: "3,3% + 1 L o más a continuación" },
-      { tipo: "DW(106)", sabado: "No", finmes: "No", hora: "+04:00z", resultado: "5% + 1 L o más a continuación" }, <!-- CORREGIDO -->
+      { tipo: "DW(106)", sabado: "No", finmes: "No", hora: "+04:00z", resultado: "5% + 1 L o más a continuación" }, // ✅ corregido aquí
+
       { tipo: "DW(106)", sabado: "Yes", finmes: "No", hora: "00:00z - 01:00z", resultado: "3,3% + 1 bloque de 106 incluye sábado y domingo" },
       { tipo: "DW(106)", sabado: "Yes", finmes: "No", hora: "01:00z - 03:59z", resultado: "3,3% + 1 bloque de 106 incluye sábado y domingo" },
       { tipo: "DW(106)", sabado: "Yes", finmes: "No", hora: "+04:00z", resultado: "5% + 1 bloque de 106 incluye sábado y domingo" },
+
       { tipo: "DW(106)", sabado: "No", finmes: "Yes", hora: "00:00z - 01:00z", resultado: "3,3% + 4L + 2L a continuación, incluye sábado y domingo. No se consideran los DH" },
       { tipo: "DW(106)", sabado: "No", finmes: "Yes", hora: "01:00z - 03:59z", resultado: "3,3% + 4L + 2L a continuación, incluye sábado y domingo. No se consideran los DH" },
       { tipo: "DW(106)", sabado: "No", finmes: "Yes", hora: "+04:00z", resultado: "5% + 4L + 2L a continuación, incluye sábado y domingo. No se consideran los DH" },
+
       { tipo: "DW(106)", sabado: "Yes", finmes: "Yes", hora: "00:00z - 01:00z", resultado: "3,3% + 4L + 2L a continuación, incluye sábado y domingo. No se consideran los DH" },
       { tipo: "DW(106)", sabado: "Yes", finmes: "Yes", hora: "01:00z - 03:59z", resultado: "3,3% + 4L + 2L a continuación, incluye sábado y domingo. No se consideran los DH" },
       { tipo: "DW(106)", sabado: "Yes", finmes: "Yes", hora: "+04:00z", resultado: "5% + 4L + 2L a continuación, incluye sábado y domingo. No se consideran los DH" }
