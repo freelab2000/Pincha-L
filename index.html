@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8" />
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pincha L</title>
-  <link rel="manifest" href="manifest.json" />
+  <link rel="manifest" href="manifest.json">
   <script>
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker.register("sw.js");
-      });
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js');
     }
   </script>
   <style>
@@ -49,12 +48,15 @@
       font-weight: bold;
       cursor: pointer;
     }
-    #consultarBtn {
-      background-color: #007bff;
+    .btn-clear {
+      background-color: #dc3545;
       color: white;
     }
-    #limpiarBtn {
-      background-color: #dc3545;
+    .btn-clear:hover {
+      background-color: #a71d2a;
+    }
+    .btn-submit {
+      background-color: #007bff;
       color: white;
     }
     .resultado {
@@ -79,14 +81,14 @@
 
     <form id="miFormulario">
       <label>Día Pinchado</label>
-      <select id="tipo" required>
+      <select name="tipo" id="tipo" required>
         <option value="DO/DH">DO/DH</option>
         <option value="DW(106)">DW(106)</option>
       </select>
 
       <div id="bloqueDuracion">
         <label>Secuencia</label>
-        <select id="duracion" required>
+        <select name="duracion" id="duracion" required>
           <option value="<= 5 days">&lt;= 5 days</option>
           <option value=">= 6 days">&gt;= 6 days</option>
           <option value="Day 6">Day 6</option>
@@ -96,28 +98,30 @@
 
       <div id="bloqueSabado">
         <label>¿Es sábado?</label>
-        <select id="sabado" required>
+        <select name="sabado" id="sabado" required>
           <option value="Yes">Yes</option>
           <option value="No">No</option>
+          <option value="-">-</option>
         </select>
       </div>
 
       <div id="bloqueFinmes">
         <label>¿Es último día del mes?</label>
-        <select id="finmes" required>
+        <select name="finmes" id="finmes" required>
           <option value="Yes">Yes</option>
           <option value="No">No</option>
+          <option value="-">-</option>
         </select>
       </div>
 
       <div id="bloqueHora">
         <label>Horario</label>
-        <select id="hora" required></select>
+        <select name="hora" id="hora" required></select>
       </div>
 
       <div class="btn-group">
-        <button type="submit" id="consultarBtn">Consultar</button>
-        <button type="button" id="limpiarBtn">Limpiar</button>
+        <button type="submit" class="btn-submit">Consultar</button>
+        <button type="button" class="btn-clear" id="limpiarBtn">Limpiar</button>
       </div>
     </form>
 
@@ -126,95 +130,130 @@
   </div>
 
   <script>
-    const reglas = [
-      // === DO/DH ===
-      { tipo: "DO/DH", duracion: "Day 6", resultado: "3,3% + Se agregan L necesarios para completar los 4 L inmediatamente posterior" },
-      { tipo: "DO/DH", duracion: "<= 5 days", hora: "00:00z - 02:30z", resultado: "3,3% + Día libre a continuación compensatorio" },
-      { tipo: "DO/DH", duracion: ">= 6 days", hora: "00:00z - 02:30z", resultado: "3,3% + Dia (s) L para completar 4 L inmediatamente posterior" },
-
-      // === DW(106) ===
-      { tipo: "DW(106)", sabado: "No", finmes: "No", hora: "00:00z - 01:00z", resultado: "3,3% + 1 Día libre después del último L,  no se reintegra antes de 12:00z" },
-      { tipo: "DW(106)", sabado: "No", finmes: "No", hora: "01:00z - 03:59z", resultado: "3,3% + 1 L o más a continuación" },
-      { tipo: "DW(106)", sabado: "No", finmes: "No", hora: "+04:00z", resultado: "3,3% + 1 L o más a continuación" },
-
-      { tipo: "DW(106)", sabado: "Yes", finmes: "No", hora: "00:00z - 01:00z", resultado: "3,3% + 1 Bloque de 106 incluye sábado y domingo" },
-      { tipo: "DW(106)", sabado: "Yes", finmes: "No", hora: "01:00z - 03:59z", resultado: "3,3% + 1 Bloque de 106 incluye sábado y domingo" },
-      { tipo: "DW(106)", sabado: "Yes", finmes: "No", hora: "+04:00z", resultado: "5% + 1 Bloque de 106 incluye sábado y domingo" },
-
-      { tipo: "DW(106)", sabado: "No", finmes: "Yes", hora: "00:00z - 01:00z", resultado: "3,3% + 4L + 2L a continuación, incluye sábado y domingo. No se consideran los DH" },
-      { tipo: "DW(106)", sabado: "No", finmes: "Yes", hora: "01:00z - 03:59z", resultado: "3,3% + 4L + 2L a continuación, incluye sábado y domingo. No se consideran los DH" },
-      { tipo: "DW(106)", sabado: "No", finmes: "Yes", hora: "+04:00z", resultado: "5% + 4L + 2L a continuación, incluye sábado y domingo. No se consideran los DH" },
-
-      { tipo: "DW(106)", sabado: "Yes", finmes: "Yes", hora: "00:00z - 01:00z", resultado: "3,3% + 4L + 2L a continuación, incluye sábado y domingo" },
-      { tipo: "DW(106)", sabado: "Yes", finmes: "Yes", hora: "01:00z - 03:59z", resultado: "3,3% + 4L + 2L a continuación, incluye sábado y domingo" },
-      { tipo: "DW(106)", sabado: "Yes", finmes: "Yes", hora: "+04:00z", resultado: "5% + 4L + 2L a continuación, incluye sábado y domingo" },
-    ];
-
-    const opcionesHorario = {
-      default: ["00:00z - 01:00z", "01:00z - 03:59z", "+04:00z"],
-      do_dh: ["00:00z - 02:30z"]
-    };
-
     const selectTipo = document.getElementById('tipo');
     const selectDuracion = document.getElementById('duracion');
     const selectHora = document.getElementById('hora');
-    const selectSabado = document.getElementById('sabado');
-    const selectFinmes = document.getElementById('finmes');
-    const resultadoDiv = document.getElementById("resultado");
+    const consultarBtn = document.querySelector('.btn-submit');
 
     const bloqueDuracion = document.getElementById('bloqueDuracion');
     const bloqueSabado = document.getElementById('bloqueSabado');
     const bloqueFinmes = document.getElementById('bloqueFinmes');
     const bloqueHora = document.getElementById('bloqueHora');
 
+    const opcionesHorario = {
+      default: [
+        "00:00z - 01:00z",
+        "01:00z - 03:59z",
+        "+04:00z",
+        "00:00z - 02:30z",
+        "-"
+      ],
+      dw106: [
+        "00:00z - 01:00z",
+        "01:00z - 03:59z",
+        "+04:00z"
+      ],
+      do_dh: ["00:00z - 02:30z"]
+    };
+
+    const excepcionesLocal = [
+      {
+        tipo: "DW(106)",
+        sabado: "Yes",
+        finmes: "Yes",
+        hora: "00:00z - 01:00z",
+        resultado: "5% + 1L + Bloque 106 incluye sábado y domingo"
+      },
+      {
+        tipo: "DW(106)",
+        sabado: "Yes",
+        finmes: "Yes",
+        hora: "01:00z - 03:59z",
+        resultado: "5% + 1L + Bloque 106 incluye sábado y domingo"
+      },
+      {
+        tipo: "DW(106)",
+        sabado: "Yes",
+        finmes: "Yes",
+        hora: "+04:00z",
+        resultado: "5% + 1L + Bloque 106 incluye sábado y domingo"
+      }
+    ];
+
     function actualizarOpcionesHorario() {
       const tipo = selectTipo.value;
-      let opciones = tipo === "DO/DH" ? opcionesHorario.do_dh : opcionesHorario.default;
+      const duracion = selectDuracion.value;
+      let opciones = opcionesHorario.default;
+
+      if (tipo === "DO/DH" && (duracion === "<= 5 days" || duracion === ">= 6 days")) {
+        opciones = opcionesHorario.do_dh;
+      } else if (tipo === "DW(106)") {
+        opciones = opcionesHorario.dw106;
+      }
+
       selectHora.innerHTML = "";
-      opciones.forEach(h => {
-        const op = document.createElement("option");
-        op.value = h;
-        op.textContent = h;
-        selectHora.appendChild(op);
+      opciones.forEach(op => {
+        const option = document.createElement("option");
+        option.value = op;
+        option.textContent = op;
+        selectHora.appendChild(option);
       });
 
       if (tipo === "DO/DH") {
-        bloqueDuracion.classList.remove("hidden");
         bloqueSabado.classList.add("hidden");
         bloqueFinmes.classList.add("hidden");
-      } else {
-        bloqueDuracion.classList.add("hidden");
+        bloqueDuracion.classList.remove("hidden");
+        if (duracion === "Day 6") {
+          bloqueHora.classList.add("hidden");
+        } else {
+          bloqueHora.classList.remove("hidden");
+        }
+      } else if (tipo === "DW(106)") {
         bloqueSabado.classList.remove("hidden");
         bloqueFinmes.classList.remove("hidden");
+        bloqueDuracion.classList.add("hidden");
+        bloqueHora.classList.remove("hidden");
+      } else {
+        bloqueSabado.classList.remove("hidden");
+        bloqueFinmes.classList.remove("hidden");
+        bloqueDuracion.classList.remove("hidden");
+        bloqueHora.classList.remove("hidden");
       }
     }
 
     document.getElementById('miFormulario').addEventListener('submit', function(e) {
       e.preventDefault();
-      const tipo = selectTipo.value;
-      const duracion = selectDuracion.value;
-      const hora = selectHora.value;
-      const sabado = selectSabado.value;
-      const finmes = selectFinmes.value;
+      const datos = {
+        tipo: this.tipo.value,
+        duracion: this.duracion ? this.duracion.value : "-",
+        hora: this.hora.value,
+        sabado: this.sabado ? this.sabado.value : "-",
+        finmes: this.finmes ? this.finmes.value : "-"
+      };
 
-      const match = reglas.find(r =>
-        r.tipo === tipo &&
-        (r.duracion === undefined || r.duracion === duracion) &&
-        (r.hora === undefined || r.hora === hora) &&
-        (r.sabado === undefined || r.sabado === sabado) &&
-        (r.finmes === undefined || r.finmes === finmes)
+      const excepcion = excepcionesLocal.find(r =>
+        r.tipo === datos.tipo &&
+        r.sabado === datos.sabado &&
+        r.finmes === datos.finmes &&
+        r.hora === datos.hora
       );
 
-      resultadoDiv.textContent = "Resultado: " + (match ? match.resultado : "Sin resultado definido");
+      if (excepcion) {
+        document.getElementById("resultado").innerHTML = "Resultado: " + excepcion.resultado;
+      } else {
+        google.script.run.withSuccessHandler(res => {
+          document.getElementById("resultado").innerHTML = "Resultado: " + res;
+        }).obtenerResultado(datos);
+      }
     });
 
     document.getElementById('limpiarBtn').addEventListener('click', () => {
       document.getElementById("miFormulario").reset();
       actualizarOpcionesHorario();
-      resultadoDiv.textContent = "Resultado:";
+      document.getElementById("resultado").innerHTML = "Resultado:";
     });
 
-    ['tipo', 'duracion', 'hora', 'sabado', 'finmes'].forEach(id => {
+    ['tipo', 'duracion', 'sabado', 'finmes', 'hora'].forEach(id => {
       document.getElementById(id).addEventListener('change', actualizarOpcionesHorario);
     });
 
