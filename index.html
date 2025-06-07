@@ -116,7 +116,7 @@
     </form>
 
     <div class="resultado" id="resultado">Resultado:</div>
-    <div class="footer">v2.2.14fwt</div>
+    <div class="footer">v2.2.15fwt</div>
   </div>
 
   <script>
@@ -146,7 +146,10 @@
       { tipo: "DW(106)", sabado: "Yes", finmes: "No", horarios: ["+04:00z"], resultado: "3,3% sin L a continuación" },
       { tipo: "DW(106)", sabado: "No", finmes: "Yes", horarios: ["00:00z - 01:00z"], resultado: "3,3% + 2L (último día sin sábado)" },
       { tipo: "DW(106)", sabado: "No", finmes: "Yes", horarios: ["01:00z - 03:59z"], resultado: "3,3% + 1L exacto" },
-      { tipo: "DW(106)", sabado: "No", finmes: "Yes", horarios: ["+04:00z"], resultado: "3,3% + sin L" }
+      { tipo: "DW(106)", sabado: "No", finmes: "Yes", horarios: ["+04:00z"], resultado: "3,3% + sin L" },
+      { tipo: "DO/DH", duracion: "<= 5 days", resultado: "2,5% día corto" },
+      { tipo: "DO/DH", duracion: ">= 6 days", resultado: "3,0% día largo" },
+      { tipo: "DO/DH", duracion: "Day 6", resultado: "3,5% día sexto" }
     ];
 
     function normalizar(valor) {
@@ -183,22 +186,27 @@
       e.preventDefault();
 
       const tipo = selectTipo.value;
+      const duracion = selectDuracion.value;
       const sabado = selectSabado.value;
       const finmes = selectFinmes.value;
       const hora = selectHora.value;
 
-      const regla = reglasExtra.find(r =>
-        r.tipo === tipo &&
-        normalizar(r.sabado) === normalizar(sabado) &&
-        normalizar(r.finmes) === normalizar(finmes) &&
-        r.horarios.includes(hora)
-      );
+      let resultado = "Sin resultado definido";
 
-      if (regla) {
-        resultadoDiv.innerHTML = "Resultado: " + regla.resultado;
-      } else {
-        resultadoDiv.innerHTML = "Resultado: Sin resultado definido";
+      for (let r of reglasExtra) {
+        if (
+          r.tipo === tipo &&
+          (r.duracion ? r.duracion === duracion : true) &&
+          (r.sabado ? normalizar(r.sabado) === normalizar(sabado) : true) &&
+          (r.finmes ? normalizar(r.finmes) === normalizar(finmes) : true) &&
+          (r.horarios ? r.horarios.includes(hora) : true)
+        ) {
+          resultado = r.resultado;
+          break;
+        }
       }
+
+      resultadoDiv.innerHTML = "Resultado: " + resultado;
     });
 
     document.getElementById('limpiarBtn').addEventListener('click', () => {
