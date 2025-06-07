@@ -93,7 +93,6 @@
         <select name="sabado" id="sabado">
           <option value="Yes">Yes</option>
           <option value="No">No</option>
-          <option value="-">-</option>
         </select>
       </div>
 
@@ -102,7 +101,6 @@
         <select name="finmes" id="finmes">
           <option value="Yes">Yes</option>
           <option value="No">No</option>
-          <option value="-">-</option>
         </select>
       </div>
 
@@ -118,7 +116,7 @@
     </form>
 
     <div class="resultado" id="resultado">Resultado:</div>
-    <div class="footer">v2.2.13fwt</div>
+    <div class="footer">v2.2.14fwt</div>
   </div>
 
   <script>
@@ -129,6 +127,11 @@
     const selectFinmes = document.getElementById('finmes');
     const resultadoDiv = document.getElementById("resultado");
 
+    const bloqueDuracion = document.getElementById('bloqueDuracion');
+    const bloqueSabado = document.getElementById('bloqueSabado');
+    const bloqueFinmes = document.getElementById('bloqueFinmes');
+    const bloqueHora = document.getElementById('bloqueHora');
+
     const opcionesHorario = {
       default: ["00:00z - 01:00z", "01:00z - 03:59z", "+04:00z", "00:00z - 02:30z", "-"],
       dw106: ["00:00z - 01:00z", "01:00z - 03:59z", "+04:00z"],
@@ -137,20 +140,50 @@
 
     const reglasExtra = [
       {
-        tipo: "DW(106)",
-        sabado: "Yes",
-        finmes: "Yes",
+        tipo: "DW(106)", sabado: "Yes", finmes: "Yes",
         horarios: ["00:00z - 01:00z", "01:00z - 03:59z", "+04:00z"],
         resultado: "3,3% + 4L + 2L a continuación, incluye sábado y domingo"
       },
       {
-        tipo: "DW(106)",
-        sabado: "No",
-        finmes: "No",
+        tipo: "DW(106)", sabado: "No", finmes: "No",
         horarios: ["00:00z - 01:00z", "01:00z - 03:59z", "+04:00z"],
         resultado: "3,3% + 1L o más a continuación"
+      },
+      {
+        tipo: "DW(106)", sabado: "Yes", finmes: "No",
+        horarios: ["00:00z - 01:00z"],
+        resultado: "3,3% + 3L a continuación (sábado activo)"
+      },
+      {
+        tipo: "DW(106)", sabado: "Yes", finmes: "No",
+        horarios: ["01:00z - 03:59z"],
+        resultado: "3,3% + 2L a continuación"
+      },
+      {
+        tipo: "DW(106)", sabado: "Yes", finmes: "No",
+        horarios: ["+04:00z"],
+        resultado: "3,3% sin L a continuación"
+      },
+      {
+        tipo: "DW(106)", sabado: "No", finmes: "Yes",
+        horarios: ["00:00z - 01:00z"],
+        resultado: "3,3% + 2L (último día sin sábado)"
+      },
+      {
+        tipo: "DW(106)", sabado: "No", finmes: "Yes",
+        horarios: ["01:00z - 03:59z"],
+        resultado: "3,3% + 1L exacto"
+      },
+      {
+        tipo: "DW(106)", sabado: "No", finmes: "Yes",
+        horarios: ["+04:00z"],
+        resultado: "3,3% + sin L"
       }
     ];
+
+    function normalizar(valor) {
+      return (valor || "").trim().toLowerCase();
+    }
 
     function actualizarOpcionesHorario() {
       const tipo = selectTipo.value;
@@ -171,9 +204,10 @@
         selectHora.appendChild(option);
       });
 
-      bloqueSabado.classList.toggle("hidden", tipo === "DO/DH");
-      bloqueFinmes.classList.toggle("hidden", tipo === "DO/DH");
-      bloqueDuracion.classList.toggle("hidden", tipo === "DW(106"));
+      // Mostrar/Ocultar según tipo
+      bloqueSabado.classList.toggle("hidden", tipo !== "DW(106)");
+      bloqueFinmes.classList.toggle("hidden", tipo !== "DW(106)");
+      bloqueDuracion.classList.toggle("hidden", tipo === "DW(106)");
       bloqueHora.classList.toggle("hidden", tipo === "DO/DH" && duracion === "Day 6");
     }
 
@@ -181,15 +215,14 @@
       e.preventDefault();
 
       const tipo = selectTipo.value;
-      const duracion = selectDuracion.value;
       const sabado = selectSabado.value;
       const finmes = selectFinmes.value;
       const hora = selectHora.value;
 
       const regla = reglasExtra.find(r =>
         r.tipo === tipo &&
-        r.sabado === sabado &&
-        r.finmes === finmes &&
+        normalizar(r.sabado) === normalizar(sabado) &&
+        normalizar(r.finmes) === normalizar(finmes) &&
         r.horarios.includes(hora)
       );
 
