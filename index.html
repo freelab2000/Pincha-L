@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
   <meta charset="UTF-8">
   <title>Pincha L</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="manifest" href="manifest.json">
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
       text-align: center;
-      background: #f9f9f9;
       margin-top: 30px;
+      background: #f9f9f9;
     }
     .container {
       background: white;
@@ -31,8 +31,8 @@
     label {
       font-weight: bold;
       display: block;
-      text-align: left;
       margin-top: 10px;
+      text-align: left;
     }
     .btn-group {
       display: flex;
@@ -43,11 +43,11 @@
       font-weight: bold;
       cursor: pointer;
     }
-    #consultarBtn {
+    .btn-submit {
       background-color: #007bff;
       color: white;
     }
-    #limpiarBtn {
+    .btn-clear {
       background-color: #dc3545;
       color: white;
     }
@@ -70,16 +70,17 @@
   <div class="container">
     <h2>Pincha L</h2>
     <p>Bienvenidos 👨‍✈️👩‍✈️, selecciona de acuerdo a las alternativas.</p>
+
     <form id="miFormulario">
       <label>Día Pinchado</label>
-      <select id="tipo" name="tipo">
+      <select name="tipo" id="tipo" required>
         <option value="DO/DH">DO/DH</option>
         <option value="DW(106)">DW(106)</option>
       </select>
 
       <div id="bloqueDuracion">
         <label>Secuencia</label>
-        <select id="duracion" name="duracion">
+        <select name="duracion" id="duracion">
           <option value="<= 5 days">&lt;= 5 days</option>
           <option value=">= 6 days">&gt;= 6 days</option>
           <option value="Day 6">Day 6</option>
@@ -89,7 +90,7 @@
 
       <div id="bloqueSabado">
         <label>¿Es sábado?</label>
-        <select id="sabado" name="sabado">
+        <select name="sabado" id="sabado">
           <option value="Yes">Yes</option>
           <option value="No">No</option>
           <option value="-">-</option>
@@ -98,7 +99,7 @@
 
       <div id="bloqueFinmes">
         <label>¿Es último día del mes?</label>
-        <select id="finmes" name="finmes">
+        <select name="finmes" id="finmes">
           <option value="Yes">Yes</option>
           <option value="No">No</option>
           <option value="-">-</option>
@@ -107,31 +108,26 @@
 
       <div id="bloqueHora">
         <label>Horario</label>
-        <select id="hora" name="hora"></select>
+        <select name="hora" id="hora"></select>
       </div>
 
       <div class="btn-group">
-        <button type="submit" id="consultarBtn">Consultar</button>
-        <button type="button" id="limpiarBtn">Limpiar</button>
+        <button type="submit" class="btn-submit">Consultar</button>
+        <button type="button" class="btn-clear" id="limpiarBtn">Limpiar</button>
       </div>
     </form>
+
     <div class="resultado" id="resultado">Resultado:</div>
-    <div class="footer">v2.2.13lwt</div>
+    <div class="footer">v2.2.13fwt</div>
   </div>
 
   <script>
-    const form = document.getElementById("miFormulario");
+    const selectTipo = document.getElementById('tipo');
+    const selectDuracion = document.getElementById('duracion');
+    const selectHora = document.getElementById('hora');
+    const selectSabado = document.getElementById('sabado');
+    const selectFinmes = document.getElementById('finmes');
     const resultadoDiv = document.getElementById("resultado");
-    const tipo = document.getElementById("tipo");
-    const duracion = document.getElementById("duracion");
-    const sabado = document.getElementById("sabado");
-    const finmes = document.getElementById("finmes");
-    const hora = document.getElementById("hora");
-
-    const bloqueDuracion = document.getElementById("bloqueDuracion");
-    const bloqueSabado = document.getElementById("bloqueSabado");
-    const bloqueFinmes = document.getElementById("bloqueFinmes");
-    const bloqueHora = document.getElementById("bloqueHora");
 
     const opcionesHorario = {
       default: ["00:00z - 01:00z", "01:00z - 03:59z", "+04:00z", "00:00z - 02:30z", "-"],
@@ -139,96 +135,82 @@
       do_dh: ["00:00z - 02:30z"]
     };
 
-    const reglasExtras = [
+    const reglasExtra = [
       {
         tipo: "DW(106)",
         sabado: "Yes",
         finmes: "Yes",
-        hora: "00:00z - 01:00z",
-        resultado: "3,3% + 4L + 2L a continuación, incluye sábado y domingo. No se consideran los DH"
+        horarios: ["00:00z - 01:00z", "01:00z - 03:59z", "+04:00z"],
+        resultado: "3,3% + 4L + 2L a continuación, incluye sábado y domingo"
       },
       {
         tipo: "DW(106)",
-        sabado: "Yes",
-        finmes: "Yes",
-        hora: "01:00z - 03:59z",
-        resultado: "3,3% + 4L + 2L a continuación, incluye sábado y domingo. No se consideran los DH"
-      },
-      {
-        tipo: "DW(106)",
-        sabado: "Yes",
-        finmes: "Yes",
-        hora: "+04:00z",
-        resultado: "5% + 4L + 2L a continuación, incluye sábado y domingo. No se consideran los DH"
+        sabado: "No",
+        finmes: "No",
+        horarios: ["00:00z - 01:00z", "01:00z - 03:59z", "+04:00z"],
+        resultado: "3,3% + 1L o más a continuación"
       }
     ];
 
     function actualizarOpcionesHorario() {
-      const tipoVal = tipo.value;
-      const duracionVal = duracion.value;
-      let opciones = opcionesHorario.default;
+      const tipo = selectTipo.value;
+      const duracion = selectDuracion.value;
 
-      if (tipoVal === "DO/DH") {
+      let opciones = opcionesHorario.default;
+      if (tipo === "DO/DH" && (duracion === "<= 5 days" || duracion === ">= 6 days")) {
         opciones = opcionesHorario.do_dh;
-      } else if (tipoVal === "DW(106)") {
+      } else if (tipo === "DW(106)") {
         opciones = opcionesHorario.dw106;
       }
 
-      hora.innerHTML = "";
+      selectHora.innerHTML = "";
       opciones.forEach(op => {
         const option = document.createElement("option");
         option.value = op;
         option.textContent = op;
-        hora.appendChild(option);
+        selectHora.appendChild(option);
       });
 
-      if (tipoVal === "DO/DH") {
-        bloqueSabado.classList.add("hidden");
-        bloqueFinmes.classList.add("hidden");
-        bloqueDuracion.classList.remove("hidden");
-        bloqueHora.classList.remove("hidden");
-      } else if (tipoVal === "DW(106)") {
-        bloqueDuracion.classList.add("hidden");
-        bloqueSabado.classList.remove("hidden");
-        bloqueFinmes.classList.remove("hidden");
-        bloqueHora.classList.remove("hidden");
-      }
+      bloqueSabado.classList.toggle("hidden", tipo === "DO/DH");
+      bloqueFinmes.classList.toggle("hidden", tipo === "DO/DH");
+      bloqueDuracion.classList.toggle("hidden", tipo === "DW(106"));
+      bloqueHora.classList.toggle("hidden", tipo === "DO/DH" && duracion === "Day 6");
     }
 
-    form.addEventListener("submit", function(e) {
+    document.getElementById('miFormulario').addEventListener('submit', function(e) {
       e.preventDefault();
-      const datos = {
-        tipo: tipo.value,
-        duracion: duracion.value,
-        sabado: sabado.value,
-        finmes: finmes.value,
-        hora: hora.value
-      };
 
-      const extra = reglasExtras.find(r =>
-        r.tipo === datos.tipo &&
-        r.sabado === datos.sabado &&
-        r.finmes === datos.finmes &&
-        r.hora === datos.hora
+      const tipo = selectTipo.value;
+      const duracion = selectDuracion.value;
+      const sabado = selectSabado.value;
+      const finmes = selectFinmes.value;
+      const hora = selectHora.value;
+
+      const regla = reglasExtra.find(r =>
+        r.tipo === tipo &&
+        r.sabado === sabado &&
+        r.finmes === finmes &&
+        r.horarios.includes(hora)
       );
 
-      if (extra) {
-        resultadoDiv.textContent = "Resultado: " + extra.resultado;
+      if (regla) {
+        resultadoDiv.innerHTML = "Resultado: " + regla.resultado;
       } else {
-        resultadoDiv.textContent = "Resultado: Sin resultado definido";
+        resultadoDiv.innerHTML = "Resultado: Sin resultado definido";
       }
     });
 
-    document.getElementById("limpiarBtn").addEventListener("click", () => {
-      form.reset();
+    document.getElementById('limpiarBtn').addEventListener('click', () => {
+      document.getElementById("miFormulario").reset();
       actualizarOpcionesHorario();
-      resultadoDiv.textContent = "Resultado:";
+      resultadoDiv.innerHTML = "Resultado:";
     });
 
-    tipo.addEventListener("change", actualizarOpcionesHorario);
-    duracion.addEventListener("change", actualizarOpcionesHorario);
+    ['tipo', 'duracion', 'sabado', 'finmes', 'hora'].forEach(id => {
+      document.getElementById(id).addEventListener('change', actualizarOpcionesHorario);
+    });
 
-    window.addEventListener("load", actualizarOpcionesHorario);
+    window.addEventListener('load', actualizarOpcionesHorario);
   </script>
 </body>
 </html>
