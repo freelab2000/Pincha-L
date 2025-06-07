@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="theme-color" content="#ffffff"/>
-  <link rel="manifest" href="manifest.json" />
-  <link rel="icon" href="icon-192x192.png" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pincha L</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon-192x192.png">
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -118,7 +117,7 @@
       </div>
 
       <div class="btn-group">
-        <button type="submit" id="consultarBtn" disabled>Consultar</button>
+        <button type="submit" id="consultarBtn">Consultar</button>
         <button type="button" class="btn-clear" id="limpiarBtn">Limpiar</button>
       </div>
     </form>
@@ -128,21 +127,6 @@
   </div>
 
   <script>
-    const reglas = [
-      { tipo: "DO/DH", duracion: "Day 6", resultado: "3,3% + Se agregan L necesarios para completar los 4 L inmediatamente posterior" },
-      { tipo: "DO/DH", duracion: "<= 5 days", resultado: "3,3% + Día libre a continuación compensatorio" },
-      { tipo: "DO/DH", duracion: ">= 6 days", resultado: "3,3% + Día (s) L para completar 4 L inmediatamente posterior" },
-      { tipo: "DW(106)", sabado: "No", finmes: "No", hora: "00:00z - 01:00z", resultado: "3,3% + Día libre después del último L, no se reintegra antes de 12:00z" },
-      { tipo: "DW(106)", sabado: "No", finmes: "No", hora: "01:00z - 03:59z", resultado: "3,3% + 1 L o más a continuación" },
-      { tipo: "DW(106)", sabado: "No", finmes: "No", hora: "+04:00z", resultado: "3,3% + 1 L o más a continuación" },
-      { tipo: "DW(106)", sabado: "Yes", finmes: "No", hora: "00:00z - 01:00z", resultado: "3,3% + 1 Bloque de 106 incluye sábado y domingo" },
-      { tipo: "DW(106)", sabado: "Yes", finmes: "No", hora: "01:00z - 03:59z", resultado: "3,3% + 1 Bloque de 106 incluye sábado y domingo" },
-      { tipo: "DW(106)", sabado: "Yes", finmes: "No", hora: "+04:00z", resultado: "5% + 1 Bloque de 106 incluye sábado y domingo" },
-      { tipo: "DW(106)", sabado: "No", finmes: "Yes", hora: "00:00z - 01:00z", resultado: "3,3% + 4L + 2L a continuación, incluye sábado y domingo. No se consideran los DH" },
-      { tipo: "DW(106)", sabado: "No", finmes: "Yes", hora: "01:00z - 03:59z", resultado: "3,3% + 4L + 2L a continuación, incluye sábado y domingo. No se consideran los DH" },
-      { tipo: "DW(106)", sabado: "No", finmes: "Yes", hora: "+04:00z", resultado: "5% + 4L + 2L a continuación, incluye sábado y domingo. No se consideran los DH" }
-    ];
-
     const selectTipo = document.getElementById('tipo');
     const selectDuracion = document.getElementById('duracion');
     const selectHora = document.getElementById('hora');
@@ -156,16 +140,44 @@
     const bloqueHora = document.getElementById('bloqueHora');
 
     const opcionesHorario = {
-      default: ["00:00z - 01:00z", "01:00z - 03:59z", "+04:00z", "00:00z - 02:30z", "-"],
-      dw106: ["00:00z - 01:00z", "01:00z - 03:59z", "+04:00z"],
+      default: [
+        "00:00z - 01:00z",
+        "01:00z - 03:59z",
+        "+04:00z",
+        "00:00z - 02:30z",
+        "-"
+      ],
+      dw106: [
+        "00:00z - 01:00z",
+        "01:00z - 03:59z",
+        "+04:00z"
+      ],
       do_dh: ["00:00z - 02:30z"]
     };
+
+    const reglas = [
+      { tipo: "DO/DH", sabado: "-", finmes: "-", hora: "00:00z - 02:30z", duracion: "Day 6", resultado: "3,3% + se agregan L necesarios para completar los 4 L inmediatamente posterior" },
+      { tipo: "DO/DH", sabado: "-", finmes: "-", hora: "00:00z - 02:30z", duracion: "<= 5 days", resultado: "3,3% + Día libre a continuación compensatorio" },
+      { tipo: "DO/DH", sabado: "-", finmes: "-", hora: "00:00z - 02:30z", duracion: ">= 6 days", resultado: "3,3% + Día (s) L para completar 4 L inmediatamente posterior" },
+
+      { tipo: "DW(106)", sabado: "No", finmes: "No", hora: "00:00z - 01:00z", duracion: "-", resultado: "3,3% + 1 Día libre después del último L, no se reintegra antes de 12:00z" },
+      { tipo: "DW(106)", sabado: "No", finmes: "No", hora: "01:00z - 03:59z", duracion: "-", resultado: "3,3% + 1 L o más a continuación" },
+      { tipo: "DW(106)", sabado: "No", finmes: "No", hora: "+04:00z", duracion: "-", resultado: "5% + 1 L o más a continuación" },
+
+      { tipo: "DW(106)", sabado: "Yes", finmes: "No", hora: "00:00z - 01:00z", duracion: "-", resultado: "3,3% + 1 Bloque de 106 incluye sábado y domingo" },
+      { tipo: "DW(106)", sabado: "Yes", finmes: "No", hora: "01:00z - 03:59z", duracion: "-", resultado: "3,3% + 1 Bloque de 106 incluye sábado y domingo" },
+      { tipo: "DW(106)", sabado: "Yes", finmes: "No", hora: "+04:00z", duracion: "-", resultado: "5% + 1 Bloque de 106 incluye sábado y domingo" },
+
+      { tipo: "DW(106)", sabado: "No", finmes: "Yes", hora: "00:00z - 01:00z", duracion: "-", resultado: "3,3% + 4L + 2L a continuación, incluye sábado y domingo. No se consideran los DH" },
+      { tipo: "DW(106)", sabado: "Yes", finmes: "Yes", hora: "01:00z - 03:59z", duracion: "-", resultado: "3,3% + 4L + 2L a continuación, incluye sábado y domingo. No se consideran los DH" },
+      { tipo: "DW(106)", sabado: "No", finmes: "Yes", hora: "+04:00z", duracion: "-", resultado: "5% + 4L + 2L a continuación, incluye sábado y domingo. No se consideran los DH" }
+    ];
 
     function actualizarOpcionesHorario() {
       const tipo = selectTipo.value;
       const duracion = selectDuracion.value;
-      let opciones = opcionesHorario.default;
 
+      let opciones = opcionesHorario.default;
       if (tipo === "DO/DH" && (duracion === "<= 5 days" || duracion === ">= 6 days" || duracion === "Day 6")) {
         opciones = opcionesHorario.do_dh;
       } else if (tipo === "DW(106)") {
@@ -180,6 +192,7 @@
         selectHora.appendChild(option);
       });
 
+      // Mostrar/ocultar campos según tipo y duración
       if (tipo === "DO/DH") {
         bloqueSabado.classList.add("hidden");
         bloqueFinmes.classList.add("hidden");
@@ -212,7 +225,7 @@
         if (
           regla.tipo === tipo &&
           (tipo === "DO/DH"
-            ? regla.duracion === duracion
+            ? regla.duracion === duracion && regla.hora === hora
             : regla.sabado === sabado && regla.finmes === finmes && regla.hora === hora
           )
         ) {
@@ -222,24 +235,26 @@
       }
 
       document.getElementById("resultado").innerHTML = "Resultado: " + resultado;
-      consultarBtn.disabled = true;
     });
 
     document.getElementById('limpiarBtn').addEventListener('click', () => {
       document.getElementById("miFormulario").reset();
       actualizarOpcionesHorario();
       document.getElementById("resultado").innerHTML = "Resultado:";
-      consultarBtn.disabled = true;
     });
 
-    ['tipo', 'duracion', 'sabado', 'finmes', 'hora'].forEach(id => {
+    ['tipo', 'duracion'].forEach(id => {
       document.getElementById(id).addEventListener('change', () => {
-        consultarBtn.disabled = false;
         actualizarOpcionesHorario();
       });
     });
 
-    window.addEventListener('load', actualizarOpcionesHorario);
+    window.addEventListener('load', () => {
+      actualizarOpcionesHorario();
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js');
+      }
+    });
   </script>
 </body>
 </html>
