@@ -116,7 +116,7 @@
     </form>
 
     <div class="resultado" id="resultado">Resultado:</div>
-    <div class="footer">v2.2.16fwt</div>
+    <div class="footer">v2.2.17fwt</div>
   </div>
 
   <script>
@@ -192,7 +192,7 @@
           (r.duracion ? r.duracion === duracion : true) &&
           (r.sabado ? normalizar(r.sabado) === normalizar(sabado) : true) &&
           (r.finmes ? normalizar(r.finmes) === normalizar(finmes) : true) &&
-          (r.horarios ? r.horarios.includes(hora) : true)
+          (!r.horarios || r.horarios.includes(hora))
         ) {
           resultado = r.resultado;
           break;
