@@ -7,60 +7,98 @@
   <link rel="manifest" href="manifest.json">
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
+      font-family: 'Poppins', 'Segoe UI', sans-serif;
       text-align: center;
-      margin-top: 30px;
-      background: #f9f9f9;
+      margin: 0;
+      background: #f2f2f2;
+      padding: 30px 10px;
     }
+
     .container {
-      background: white;
-      max-width: 400px;
+      background: #fff;
+      max-width: 420px;
       margin: auto;
       padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      border: 1px solid #ccc;
     }
+
+    h2 {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    p {
+      margin-bottom: 20px;
+      font-size: 15px;
+    }
+
     select, button {
       width: 100%;
       padding: 10px;
-      margin: 8px 0;
-      font-size: 14px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
+      margin: 12px 0;
+      font-size: 15px;
+      border: 1px solid #bbb;
+      border-radius: 6px;
     }
+
     label {
-      font-weight: bold;
+      font-weight: 600;
       display: block;
-      margin-top: 10px;
+      margin-top: 12px;
       text-align: left;
+      font-size: 16px;
     }
+
     .btn-group {
       display: flex;
-      gap: 10px;
+      gap: 12px;
+      margin-top: 20px;
     }
+
     button {
       flex: 1;
       font-weight: bold;
       cursor: pointer;
+      transition: background 0.2s;
     }
+
     .btn-submit {
       background-color: #007bff;
       color: white;
     }
+
+    .btn-submit:hover {
+      background-color: #0056b3;
+    }
+
     .btn-clear {
       background-color: #dc3545;
       color: white;
     }
-    .resultado {
-      margin-top: 15px;
-      font-size: 16px;
-      font-weight: bold;
+
+    .btn-clear:hover {
+      background-color: #c82333;
     }
+
+    .resultado {
+      margin-top: 25px;
+      font-size: 17px;
+      font-weight: 600;
+      background-color: #f0f8ff;
+      color: #003366;
+      padding: 12px;
+      border-radius: 6px;
+    }
+
     .footer {
-      margin-top: 20px;
+      margin-top: 25px;
       font-size: 12px;
       color: #999;
     }
+
     .hidden {
       display: none;
     }
@@ -137,15 +175,13 @@
     };
 
     const reglas = [
-      // DO/DH
       { tipo: "DO/DH", duracion: "Day 6", hora: "00:00z - 02:30z", resultado: "3,3% + se agregan L necesarios para completar los 4 L inmediatamente posterior" },
       { tipo: "DO/DH", duracion: "<= 5 days", hora: "00:00z - 02:30z", resultado: "3,3% + Día libre a continuación compensatorio" },
       { tipo: "DO/DH", duracion: ">= 6 days", hora: "00:00z - 02:30z", resultado: "3,3% + Día(s) para completar 4 L inmediatamente posterior" },
 
-      // DW(106)
       { tipo: "DW(106)", sabado: "No", finmes: "No", hora: "00:00z - 01:00z", resultado: "3,3% + Día libre después del último L, no se reintegra antes de 12:00z" },
       { tipo: "DW(106)", sabado: "No", finmes: "No", hora: "01:00z - 03:59z", resultado: "3,3% + 1 L o más a continuación" },
-      { tipo: "DW(106)", sabado: "No", finmes: "No", hora: "+04:00z", resultado: "5% + 1 L o más a continuación" }, // ✅ corregido aquí
+      { tipo: "DW(106)", sabado: "No", finmes: "No", hora: "+04:00z", resultado: "5% + 1 L o más a continuación" },
 
       { tipo: "DW(106)", sabado: "Yes", finmes: "No", hora: "00:00z - 01:00z", resultado: "3,3% + 1 bloque de 106 incluye sábado y domingo" },
       { tipo: "DW(106)", sabado: "Yes", finmes: "No", hora: "01:00z - 03:59z", resultado: "3,3% + 1 bloque de 106 incluye sábado y domingo" },
