@@ -14,24 +14,19 @@
     }
     .container {
       background: white;
-      max-width: 420px;
+      max-width: 400px;
       margin: auto;
       padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-    h2 {
-      font-size: 24px;
-      font-weight: 600;
-      margin-bottom: 10px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
     select, button {
       width: 100%;
-      padding: 12px;
+      padding: 10px;
       margin: 8px 0;
       font-size: 14px;
       border: 1px solid #ccc;
-      border-radius: 6px;
+      border-radius: 5px;
     }
     label {
       font-weight: bold;
@@ -41,8 +36,7 @@
     }
     .btn-group {
       display: flex;
-      gap: 12px;
-      margin-top: 10px;
+      gap: 10px;
     }
     button {
       flex: 1;
@@ -52,35 +46,33 @@
     .btn-submit {
       background-color: #007bff;
       color: white;
-      border: none;
     }
     .btn-clear {
       background-color: #dc3545;
       color: white;
-      border: none;
     }
     .resultado {
-      margin-top: 20px;
-      font-size: 15px;
+      margin-top: 15px;
+      font-size: 16px;
       font-weight: bold;
-      background-color: #eaf4ff;
-      padding: 12px;
-      border-radius: 8px;
+      background: #e9f3ff;
+      padding: 10px;
+      border-radius: 6px;
     }
     .footer {
-      margin-top: 18px;
+      margin-top: 20px;
       font-size: 12px;
       color: #999;
     }
     .disclaimer {
-      font-size: 12px;
-      color: #555;
-      background-color: #fdf7e3;
-      padding: 10px;
-      border-left: 4px solid #f0ad4e;
-      margin-top: 20px;
-      border-radius: 5px;
+      margin-top: 15px;
+      font-size: 13px;
       text-align: left;
+      background-color: #fff4e5;
+      border-left: 5px solid #ffa500;
+      padding: 10px;
+      border-radius: 6px;
+      color: #333;
     }
     .hidden {
       display: none;
@@ -136,9 +128,11 @@
     </form>
 
     <div class="resultado" id="resultado">Resultado:</div>
+
     <div class="disclaimer">
-      ⚠️ Recuerda siempre verificar la informacion en el convenio colectivo vigente.
+      ⚠️ Recuerda siempre verificar la información en el convenio colectivo vigente.
     </div>
+
     <div class="footer">v.2.4.24.f.w.t</div>
   </div>
 
@@ -164,15 +158,19 @@
       { tipo: "DO/DH", duracion: "Day 6", hora: "00:00z - 02:30z", resultado: "3,3% + se agregan L necesarios para completar los 4 L inmediatamente posterior" },
       { tipo: "DO/DH", duracion: "<= 5 days", hora: "00:00z - 02:30z", resultado: "3,3% + Día libre a continuación compensatorio" },
       { tipo: "DO/DH", duracion: ">= 6 days", hora: "00:00z - 02:30z", resultado: "3,3% + Día(s) para completar 4 L inmediatamente posterior" },
+
       { tipo: "DW(106)", sabado: "No", finmes: "No", hora: "00:00z - 01:00z", resultado: "3,3% + Día libre después del último L, no se reintegra antes de 12:00z" },
       { tipo: "DW(106)", sabado: "No", finmes: "No", hora: "01:00z - 03:59z", resultado: "3,3% + 1 L o más a continuación" },
       { tipo: "DW(106)", sabado: "No", finmes: "No", hora: "+04:00z", resultado: "5% + 1 L o más a continuación" },
+
       { tipo: "DW(106)", sabado: "Yes", finmes: "No", hora: "00:00z - 01:00z", resultado: "3,3% + 1 bloque de 106 incluye sábado y domingo" },
       { tipo: "DW(106)", sabado: "Yes", finmes: "No", hora: "01:00z - 03:59z", resultado: "3,3% + 1 bloque de 106 incluye sábado y domingo" },
       { tipo: "DW(106)", sabado: "Yes", finmes: "No", hora: "+04:00z", resultado: "5% + 1 bloque de 106 incluye sábado y domingo" },
+
       { tipo: "DW(106)", sabado: "No", finmes: "Yes", hora: "00:00z - 01:00z", resultado: "3,3% + 4L + 2L a continuación, incluye sábado y domingo. No se consideran los DH" },
       { tipo: "DW(106)", sabado: "No", finmes: "Yes", hora: "01:00z - 03:59z", resultado: "3,3% + 4L + 2L a continuación, incluye sábado y domingo. No se consideran los DH" },
       { tipo: "DW(106)", sabado: "No", finmes: "Yes", hora: "+04:00z", resultado: "5% + 4L + 2L a continuación, incluye sábado y domingo. No se consideran los DH" },
+
       { tipo: "DW(106)", sabado: "Yes", finmes: "Yes", hora: "00:00z - 01:00z", resultado: "3,3% + 4L + 2L a continuación, incluye sábado y domingo. No se consideran los DH" },
       { tipo: "DW(106)", sabado: "Yes", finmes: "Yes", hora: "01:00z - 03:59z", resultado: "3,3% + 4L + 2L a continuación, incluye sábado y domingo. No se consideran los DH" },
       { tipo: "DW(106)", sabado: "Yes", finmes: "Yes", hora: "+04:00z", resultado: "5% + 4L + 2L a continuación, incluye sábado y domingo. No se consideran los DH" }
